@@ -1,0 +1,93 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 1. 將我們剛剛 SQL 提煉出的精華洞察，直接建立成 DataFrame
+data = {
+    'Song': ['abcdefu', 'abcdefu', 'abcdefu', 
+             'Shape of You', 'Shape of You', 'Shape of You',
+             'Despacito - Remix', 'Despacito - Remix', 'Despacito - Remix',
+             'thank u, next', 'thank u, next', 'thank u, next',
+             'Señorita', 'Señorita', 'Señorita'],
+    'Region': ['Taiwan', 'UK', 'US', 
+               'Taiwan', 'UK', 'US',
+               'Taiwan', 'UK', 'US',
+               'Taiwan', 'UK', 'US',
+               'Taiwan', 'UK', 'US'],
+    'Days_Lag': [0, 53, 60, 
+                 1, 0, 0, 
+                 56, 11, 8, 
+                 25, 0, 0, 
+                 0, 3, 2]
+}
+df = pd.DataFrame(data)
+
+# 2. 設定畫布尺寸與背景風格
+plt.figure(figsize=(12, 6))
+sns.set_theme(style="whitegrid")
+
+# 3. 繪製長條圖 (X軸是歌名，Y軸是時差天數，不同顏色代表不同國家)
+# 使用比較強烈的對比色，讓台灣的數據凸顯出來
+custom_palette = {'Taiwan': '#FF5A5F', 'UK': '#00A699', 'US': '#484848'}
+ax = sns.barplot(x="Song", y="Days_Lag", hue="Region", data=df, palette=custom_palette)
+
+# 4. 美化圖表：加上商業感標題與標籤
+plt.title("Global Music Time Lag: Taiwan vs UK vs US", fontsize=18, fontweight='bold', pad=15)
+plt.xlabel("Global Hit Songs", fontsize=12, fontweight='bold')
+plt.ylabel("Days Lag (Days to hit No.1)", fontsize=12, fontweight='bold')
+
+# 讓 X 軸的歌名稍微傾斜，避免字擠在一起
+plt.xticks(rotation=15, fontsize=11)
+
+# 把圖例 (Legend) 移到圖表外側，畫面更乾淨
+plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
+# 5. 顯示完美圖表
+plt.tight_layout()
+plt.show()
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 1. 整理兩首最具代表性歌曲的台、英、美數據
+data = {
+    'Track_Region': [
+        'Shape of You (Taiwan)', 'Shape of You (UK)', 'Shape of You (US)',
+        'abcdefu (Taiwan)', 'abcdefu (US)'
+    ],
+    'Total_Span': [161, 58, 71, 99, 20],      # 總進榜跨度天數 (頭到尾)
+    'Actual_No1_Days': [53, 63, 52, 17, 21]   # 真正拿到第一名的天數
+}
+df = pd.DataFrame(data)
+
+# 2. 設定畫布尺寸與風格
+plt.figure(figsize=(12, 6))
+sns.set_theme(style="whitegrid")
+
+# 3. 繪製重疊長條圖 (Overlapping Bar Chart)
+# 先畫底層的「總跨度天數」(淺灰色)
+ax1 = sns.barplot(x="Total_Span", y="Track_Region", data=df, color="#E0E0E0", label="Total Span (First to Last Day)")
+
+# 再畫上層的「實際奪冠天數」(搶眼的紅色)
+ax2 = sns.barplot(x="Actual_No1_Days", y="Track_Region", data=df, color="#FF5A5F", label="Actual Days at #1")
+
+# 4. 加上數據標籤，讓簡報閱讀者一目瞭然
+for index, row in df.iterrows():
+    # 標示總天數
+    plt.text(row.Total_Span + 2, index, f"Span: {row.Total_Span}d", va='center', color='#555555', fontsize=11, fontweight='bold')
+    # 標示實際第一名天數
+    plt.text(row.Actual_No1_Days - 5, index, f"{row.Actual_No1_Days}d", va='center', color='white', fontsize=11, fontweight='bold', ha='right')
+
+# 5. 美化圖表與標題
+plt.title("The 'Zombie' Effect: Lifespan vs Actual No.1 Days", fontsize=18, fontweight='bold', pad=15)
+plt.xlabel("Number of Days", fontsize=12, fontweight='bold')
+plt.ylabel("") # Y軸已經是歌名了，不用特別寫標題
+
+# 調整圖例
+plt.legend(loc="lower right", frameon=True, fontsize=11)
+
+# 6. 顯示圖表
+plt.tight_layout()
+plt.show()
